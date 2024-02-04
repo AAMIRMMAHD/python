@@ -1,0 +1,69 @@
+import random
+import tkinter as tk
+
+class MathQuizApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Math Quiz App")
+        self.root.geometry("400x300")
+
+        self.score = 0
+
+        self.label_question = tk.Label(root, text="", font=("Arial", 20))
+        self.label_question.pack(pady=20)
+
+        self.button1 = tk.Button(root, text="", command=lambda: self.check_answer(1), font=("Arial", 16))
+        self.button1.pack(pady=10)
+
+        self.button2 = tk.Button(root, text="", command=lambda: self.check_answer(2), font=("Arial", 16))
+        self.button2.pack(pady=10)
+
+        self.button3 = tk.Button(root, text="", command=lambda: self.check_answer(3), font=("Arial", 16))
+        self.button3.pack(pady=10)
+
+        self.label_score = tk.Label(root, text="Score: 0", font=("Arial", 14))
+        self.label_score.pack(side="left", padx=10, pady=10)
+
+        self.generate_question()
+
+    def generate_question(self):
+        num1 = random.randint(-10, 10)
+        num2 = random.randint(-10, 10)
+        operator = random.choice(["+", "-"])
+
+        if operator == "+":
+            answer = num1 + num2
+        else:
+            answer = num1 - num2
+
+        question_text = f"{num1} {operator} {num2} = ?"
+
+        self.label_question.config(text=question_text)
+        answers = [random.randint(-20, 20), random.randint(-20, 20), answer]
+        random.shuffle(answers)
+
+        self.button1.config(text=answers[0])
+        self.button2.config(text=answers[1])
+        self.button3.config(text=answers[2])
+
+    def check_answer(self, selected_button):
+        correct_answer = eval(self.label_question.cget("text").replace("=", ""))
+        selected_button_text = int(self.root.nametowidget(f".!button{selected_button}").cget("text"))
+
+        if selected_button_text == correct_answer:
+            self.score += 1
+        else:
+            self.score -= 1
+
+        if self.score < 0:
+            self.score = 0  # اگر امتیاز منفی شود، به صفر تنظیم شود
+
+        self.label_score.config(text=f"Score: {self.score}")
+
+        # ایجاد سوال جدید فوراً بعد از زدن دکمه جواب
+        self.generate_question()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = MathQuizApp(root)
+    root.mainloop()
